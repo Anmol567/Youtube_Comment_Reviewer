@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Image Captioning</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    
+
+<style type="text/css">
+.my{
+	padding-bottom: 50px;
+}
+.heading{
+    font-weight: 100;
+    font-size: 4em;
+    text-shadow: 1px 1px 5px black;
+}
+img{
+	height: 70%;
+	width: 160%;
+}
+.like{
+    height: 120px;
+	width:  80px;
+}
+.text{
+	font-size: 32px;
+	font-style: italic;
+}
+
+
+</style>
+
+</head>
+<body>
+	{% for message in get_flashed_messages() %}
+               <div class="alert alert-danger">
+              <button type="button" class="close"class="align-middle" data-dismiss="alert">&times;</button>
+               {{ message }}
+              </div>
+                {% endfor %}
+	<div class="container">
+
+		<div class="jumbotron ">
+	        <div class="container">
+	        	
+	            <b><strong><h1 style="padding-bottom: 20px;"class="display-2"class="font-weight-bold"class="align-middle" >Youtube Video Reviewer</h1></strong></b>
+	            <h3 class="align-middle">Upload Video Link For Review</h3>
+	        </div>
+	    </div>
+
+
+       <div class="row">
+       	  <div class="col-6">
+		<form class="form-inline" enctype="multipart/form-data" action="/" method="POST">
+	        <label><b>Video Link: &nbsp;&nbsp; </b></label>
+	        <input type="text" class="form-control" name="youtube_video_url">
+            
+	        <button type="submit" class="btn btn-primary"> Submit</button>
+	    </form>
+        </div>
+	    <br>
+	    <div class="col-6">
+        <form class="form-inline" enctype="multipart/form-data" action="/text" method="POST">
+	        <label><b>Text: &nbsp;&nbsp; </b></label>
+	        <input type="text" class="form-control" name="text">
+            
+	        <button type="submit" class="btn btn-primary"> Submit</button>
+	    </form>
+	    </div>
+	</div>
+        {%if prediction%}
+            <div class="row">
+	    		<div class="col-sm-8"style="padding-left:40px;padding-right:40px;padding-top: 40px;" >
+	    			<div class="alert alert-primary" role="alert">
+	    			<h2  style = "text-transform:capitalize;padding:100px"><b> {{prediction.text}} </b> </h2>
+	    		</div>
+	    		</div>
+	    		<div style="padding-left:40px;padding-right:40px;padding-top: 40px;" class="col-sm-2">
+	    			<p class="display-4"class="font-weight-bold"class="align-middle">{{prediction.positive}}%</p>
+	    			<img  src="static/smile.png" >
+	    		</div>
+	    		<div style="padding-left:40px;padding-right:40px;padding-top: 40px;" class="col-sm-2">
+	    			<p class="display-4"class="font-weight-bold"class="align-middle">{{prediction.negative}}%</p>
+	    			<img width="10" height="10" src="static/negative.png" >
+	    		</div>
+	    	</div>
+        {%endif%}
+
+	    {% if results %}
+	    	<div class="row">
+	    		<div class="col-sm-8">
+	    			<iframe style="padding-left:20px;padding-right:20px;padding-top: 20px;"width="700" height="400" src="https://www.youtube.com/embed/{{results.youtube_video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	    		</div>
+	    		<div style="padding-left:40px;padding-right:40px;padding-top: 40px;" class="col-sm-2">
+	    			<p class="display-4"class="font-weight-bold"class="align-middle">{{results.positive}}%</p>
+	    			<img  src="static/smile.png" >
+	    		</div>
+	    		<div style="padding-left:40px;padding-right:40px;padding-top: 40px;" class="col-sm-2">
+	    			<p class="display-4"class="font-weight-bold"class="align-middle">{{results.negative}}%</p>
+	    			<img width="10" height="10" src="static/negative.png" >
+	    		</div>
+	    	</div>
+	    	<div class="row">
+	    	<p style="padding-top: 30px;padding-bottom: 30px;" class="display-4"class="font-weight-bold"class="align-middle">Most Liked Comments : </p>
+	    	</div>
+	    	{% for x in results.most_liked_comments:%}
+	    	<div class="row">
+	    		<div class="col-sm-10">
+	    		<div class="alert alert-{{results.mycolors[loop.index]}}" role="alert">
+	    			<p class="text-center" style = "text-transform:capitalize;"><b> {{x[1]}} </b> </p>
+	    		</div>
+	    		</div>
+	    		<div class="like"class="col-sm-1"style="padding:6px;">
+	    			<img width="5" height="5"src="static/like3.png" >
+	    		</div>
+	    		<div class="col-sm-1"style="padding:2px;" >
+	    			<p class="font-weight-bold"class="align-middle" class="align-middle"><b> {{x[0]}} </b> </p>
+	    		</div>
+	    	</div>
+            {% endfor %}
+	    {% endif %}
+
+	</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
